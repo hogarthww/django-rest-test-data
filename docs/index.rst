@@ -11,3 +11,4 @@ Contents:
     :maxdepth: 2
 
     motivation
+    getting-started
