@@ -1,3 +1,4 @@
+# coding=utf-8
 from datetime import datetime
 import json
 
@@ -21,6 +22,13 @@ class TestdataClient(Client):
         data = json.dumps(data, cls=DjangoJSONEncoder)
         return super(TestdataClient, self).post(path, data, content_type,
                                                 follow, **extra)
+
+
+def _pk_sort(l):
+    l.sort(key=lambda x: x['pk'])
+
+def _load_json_from_response(response):
+    return json.loads(response.content.decode('utf-8'))
 
 
 @attr('slow')
@@ -63,14 +71,19 @@ class TestSimple(TestBase):
 
         assert_equal(response.status_code, 200)
         assert_equal(response['Content-Type'], 'application/json')
-        assert_equal(response.content,
-                     self.serializer.serialize([Simple.objects.get()]))
+        assert_equal(
+            response.content,
+            self.serializer.serialize([Simple.objects.get()]).encode('utf-8')
+        )
 
     def test_str(self):
-        self.client.post(self.url(Simple), {'data': {'str_attr': 'testdata'}})
+        self.client.post(
+            self.url(Simple),
+            {'data': {'str_attr': u'testdata ☃'}}
+        )
 
         obj = Simple.objects.get()
-        assert_equal(obj.str_attr, 'testdata')
+        assert_equal(obj.str_attr, u'testdata ☃')
 
     def test_int(self):
         self.client.post(self.url(Simple), {'data': {'int_attr': 1}})
@@ -93,8 +106,10 @@ class TestSimple(TestBase):
 
         response = self.client.get(self.url(Simple))
 
-        assert_equal(response.content,
-                     self.serializer.serialize(Simple.objects.all()))
+        assert_equal(
+            response.content,
+            self.serializer.serialize(Simple.objects.all()).encode('utf-8')
+        )
 
     def test_delete_all(self):
         self.client.post(self.url(Simple))
@@ -106,50 +121,67 @@ class TestSimple(TestBase):
 
     def test_get_one(self):
         self.client.post(self.url(Simple))
-        obj = json.loads(self.client.post(self.url(Simple)).content)
+        obj = _load_json_from_response(
+            self.client.post(self.url(Simple))
+        )
         self.client.post(self.url(Simple))
 
-        result = json.loads(self.client.get(
-            self.url(Simple, pk=obj[0]['pk'])
-        ).content)
+        result = _load_json_from_response(
+            self.client.get(self.url(Simple, pk=obj[0]['pk']))
+        )
         assert_equal(obj, result)
 
     def test_delete_one(self):
         self.client.post(self.url(Simple))
-        obj = json.loads(self.client.post(self.url(Simple)).content)
+        obj = _load_json_from_response(
+            self.client.post(self.url(Simple))
+        )
         self.client.post(self.url(Simple))
         assert_equal(Simple.objects.all().count(), 3, 'Objects not created')
 
         result = self.client.delete(self.url(Simple, pk=obj[0]['pk']))
-        assert_equal(result.content, 'true')
+        assert_equal(result.content, b'true')
         assert_equal(Simple.objects.all().count(), 2)
         assert_equal(Simple.objects.filter(pk=obj[0]['pk']).count(), 0)
 
     def test_search(self):
-        q01 = json.loads(self.client.post(self.url(Simple),
-                                          {'data': {'int_attr': 1}}).content)
-        q01.extend(json.loads(
-            self.client.post(self.url(Simple),
-                             {'data': {'int_attr': 1}}).content)
+
+        response = self.client.post(
+            self.url(Simple),
+            {'data': {'int_attr': 1}}
         )
-        q02 = json.loads(self.client.post(self.url(Simple),
-                                          {'data': {'int_attr': 2}}).content)
+        q01 = _load_json_from_response(response)
+
+        response = self.client.post(
+            self.url(Simple),
+            {'data': {'int_attr': 1}}
+        )
+        q01.extend(_load_json_from_response(response))
+
+        response = self.client.post(
+            self.url(Simple),
+            {'data': {'int_attr': 1}}
+        )
+        q02 = _load_json_from_response(response)
         assert_equal(Simple.objects.all().count(), 3, 'Objects not created')
 
-        result = json.loads(self.client.post(
-            self.url(Simple, search=True), {'data': {'int_attr': 1}}
-        ).content)
-        assert_equal(sorted(result), sorted(q01))
-
-        result = json.loads(self.client.post(
-            self.url(Simple, search=True), {'data': {'int_attr': 2}}
-        ).content)
-        assert_equal(sorted(result), sorted(q02))
-
-        result = json.loads(self.client.post(
+        response = self.client.post(
             self.url(Simple, search=True),
-        ).content)
-        assert_equal(sorted(result), sorted(q01 + q02))
+            {'data': {'int_attr': 1}}
+        )
+        result = _load_json_from_response(response)
+        assert_equal(_pk_sort(result), _pk_sort(q01))
+
+        response = self.client.post(
+            self.url(Simple, search=True),
+            {'data': {'int_attr': 2}}
+        )
+        result = _load_json_from_response(response)
+        assert_equal(_pk_sort(result), _pk_sort(q02))
+
+        response = self.client.post(self.url(Simple, search=True))
+        result = _load_json_from_response(response)
+        assert_equal(_pk_sort(result), _pk_sort(q01 + q02))
 
 
 class TestKey(TestBase):
@@ -159,8 +191,10 @@ class TestKey(TestBase):
 
         assert_equal(response.status_code, 200)
         assert_equal(response['Content-Type'], 'application/json')
-        assert_equal(response.content,
-                     self.serializer.serialize([Key.objects.get()]))
+        assert_equal(
+            response.content,
+            self.serializer.serialize([Key.objects.get()]).encode('utf-8')
+        )
 
     def test_f_key(self):
         self.client.post(self.url(Simple))

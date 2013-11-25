@@ -5,6 +5,7 @@ import logging
 from django.core import serializers
 from django.db.models import get_model
 from django.http import HttpResponse, HttpResponseNotFound
+from django.utils import six
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -34,13 +35,16 @@ class BaseTestDataRestView(View):
                 logger.exception('Error fetching object')
                 return HttpResponseNotFound()
 
-        self.data = None if not request.body else json.loads(request.body)
+        self.data = None
+        if request.body:
+            body = request.body.decode('utf-8')
+            self.data = json.loads(body)
 
         result = super(BaseTestDataRestView, self).dispatch(request, *args,
                                                             **kwargs)
         if isinstance(result, HttpResponse):
             return result
-        elif isinstance(result, basestring):
+        elif isinstance(result, six.string_types):
             return HttpResponse(result,
                                 content_type='application/json')
         else:
@@ -58,7 +62,7 @@ class BaseTestDataRestView(View):
     @classmethod
     def get_data(cls, data):
         kwargs = data.get('data', {}).copy()
-        for key, value in data.get('objects', {}).iteritems():
+        for key, value in six.iteritems(data.get('objects', {})):
             if isinstance(value, list):
                 kwargs[key] = [cls.get_object(i) for i in value]
             else:

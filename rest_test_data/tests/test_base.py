@@ -71,7 +71,7 @@ def test_dispatch_wraps_string_result(dispatch):
     )
     assert_is_instance(result, HttpResponse)
     assert_equal(result['Content-Type'], 'application/json')
-    assert_equal(result.content, 'result!')
+    assert_equal(result.content, b'result!')
 
 
 @patch.object(View, 'dispatch')
@@ -97,7 +97,7 @@ def test_dispatch_jsons_other(dispatch):
     )
     assert_is_instance(result, HttpResponse)
     assert_equal(result['Content-Type'], 'application/json')
-    assert_equal(result.content, '{"test": "data"}')
+    assert_equal(result.content, b'{"test": "data"}')
 
 
 def test_get_object_model():
