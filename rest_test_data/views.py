@@ -5,10 +5,10 @@ import logging
 from django.core import serializers
 from django.db.models import get_model
 from django.http import HttpResponse, HttpResponseNotFound
-from django.utils import six
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+import six
 
 from model_mommy import mommy
 

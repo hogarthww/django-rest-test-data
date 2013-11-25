@@ -17,7 +17,7 @@ url = 'http://github.com/hogarthww/django-rest-test-data'
 author='Hogarth Worldwide Ltd.'
 author_email='zonza-devs@hogarthww.com'
 license = 'GPLv2'
-install_requires=['Django', 'model_mommy']
+install_requires=['Django', 'model_mommy', 'six']
 
 
 def get_version(package):
