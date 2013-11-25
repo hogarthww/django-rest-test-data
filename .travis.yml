@@ -12,5 +12,5 @@ matrix:
         - DJANGO_VERSION=1.6
 install:
   - pip install Django==$DJANGO_VERSION --use-mirrors
-  - pip install -r requirements.txt --use-mirrors
+  - pip install -r requirements/base.txt --use-mirrors
 script: python manage.py test
