@@ -1,6 +1,9 @@
 Motivation
 ==========
 
+Why django-rest-test-data?
+--------------------------
+
 In the spirit of `Continuous Delivery`_, we believe the following:
 
 * Running automated tests driven by Selenium against our websites is a Good
@@ -24,9 +27,21 @@ programatically set up the data in our environments however we needed it to be
 set up for our testing.  ``django-rest-test-data`` (initally known just as
 ``testdata`` internally), was the result of that effort.
 
+What it isn't
+-------------
+
+django-rest-test-data isn't a solution for any problem you have in production.
+Not even one.  It is horribly insecure, it doesn't give you any control over
+how your data is represented, nor does it support any sort of versioning.
+
+If you want any of those things (and, for production code, you do), then you
+should check out `Django Rest Framework`_.
+
 .. _Continuous Delivery: http://www.amazon.co.uk/Continuous-Delivery-Deployment-Automation-Addison-Wesley/dp/0321601912
 
 .. _"Given": http://guide.agilealliance.org/guide/gwt.html
+
+.. _Django Rest Framework: http://django-rest-framework.org/
 
 .. rubric:: Footnotes
 
