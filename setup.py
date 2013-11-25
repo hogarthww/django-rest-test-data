@@ -13,7 +13,7 @@ description=('Django app that exposes an API that lets you put the database'
              ' in any (legal) desired state.'),
 url = 'http://github.com/hogarthww/django-rest-test-data'
 author='Hogarth Worldwide Ltd.',
-author_email='zonza-devs@hogarthww.com',
+author_email='zonza-devs@hogarthww.com'
 license = 'GPLv2'
 install_requires=['Django', 'model_mommy'],
 
