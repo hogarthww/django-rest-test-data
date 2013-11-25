@@ -6,7 +6,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
-    'myproject',
+    'rest_test_data',
 )
 
 
