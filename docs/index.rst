@@ -12,3 +12,4 @@ Contents:
 
     motivation
     getting-started
+    recent-changes
