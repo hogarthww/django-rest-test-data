@@ -24,8 +24,10 @@ but in this example we'll put it at ``/testdata/``::
 Now let's test it!  Choose an app and model in your application and plug them
 in to the following (``auth`` and ``User`` might make sense)::
 
-    ./manage.py runserver
-    curl http://localhost:8000/testdata/<app>/<model>/
+    $ ./manage.py runserver
+
+    # and in another shell:
+    $ curl http://localhost:8000/testdata/<app>/<model>/
 
 You should get back a JSON list containing all of the instances of that model.
 To see what else you can do, move on to the next section.
