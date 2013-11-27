@@ -38,3 +38,5 @@ nosetests.xml
 .pydevproject
 docs/_build
 .ropeproject
+localsettings.py
+tmp.db
